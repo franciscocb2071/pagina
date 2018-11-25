@@ -1,4 +1,4 @@
-var config = {
+var config = { // configuracion para entrar a la base de datos de firebase
     apiKey: "AIzaSyALWrzIBe9pPhrD_fdJeYn913uT93XjQPg",
     authDomain: "crud-7120f.firebaseapp.com",
     databaseURL: "https://crud-7120f.firebaseio.com",
@@ -6,43 +6,46 @@ var config = {
     storageBucket: "crud-7120f.appspot.com",
     messagingSenderId: "371828146409"
   };
-  firebase.initializeApp(config);
+  firebase.initializeApp(config); //iniciamos una nueva base de firebase con la configuracion anterior
 
-  var d = new Date();
+  var d = new Date(); //
   var t = d.getTime();
   var counter = t;
 
 
-  document.getElementById("form").addEventListener("submit",(e)=>{
-  	var task = document.getElementById("task").value;
-  	var description = document.getElementById("description").value;
+  document.getElementById("form").addEventListener("submit",(e)=>{ //tomamos "form" (donde se presentar las diferentes tareas) y nos ponemos a escucha de algun "submit"
+  	var task = document.getElementById("task").value;               // guardamos el valor que haya en el input "task"
+  	var description = document.getElementById("description").value; //guardamos el valor que haya en el imput "description"
   	e.preventDefault();
     //console.log(task+description);
-    createTask(task,description);
-  	form.reset();
+    createTask(task,description); //creamos una nueva tarea
+  	form.reset(); //reseteamos el form anterior para que no haya necesidad de recargar la pagina
+      
   });
 
-  function createTask(taskName,description){
+  function createTask(taskName,description){ // para crear una tarea en la base de datos, y añadir esa tarea a la cola
     console.log(counter);
-    counter+=1;
+    counter+=1; //aumentamos el contador, que sera la Id de la tarea creada
     console.log(counter);
-    var task={
+    var task={ //creamos una nueva tarea en formato JSON con los datos que pasamos anteriormente
       id: counter,
       task: taskName,
       description:description
     }
-    let db= firebase.database().ref("tasks/"+counter);
-    db.set(task);
-    document.getElementById("cardSection").innerHTML='';
-    readTask();
+    let db= firebase.database().ref("tasks/"+counter); // db sera una variable temporal para guardar una referencia a un dato, en este caso se crea el dato con id "counter" y hacemos referencia a ese dato
+    db.set(task);                                       // importamos la variable en formato JSON a la referencia con ID "counter"
+    document.getElementById("cardSection").innerHTML=''; // iniciamos una "cardSection", o la cola de tareas en blanco
+    readTask(); // llamamos readTask(); para rellenarla
   }
 
   function readTask(){
-    var task = firebase.database().ref("tasks/");
-    task.on("child_added",function(data){
-      var taskValue = data.val();
+    var task = firebase.database().ref("tasks/"); // hacemos referencia a todas las tareas actuales
+    task.on("child_added",function(data){ // buscamos los nodos hijos añadidos en task (todas las tareas disponibles
+                                            // y ejecutamos la siguiente funcion con todo el "data" encontrado
+      var taskValue = data.val(); //el valor de la tarea actual sera el de "data" actual. Esto se repite hasta no haber mas
       
-      document.getElementById("cardSection").innerHTML+=`
+        //luego tomamos la "cardeSection" en blanco y añadimos lo obtenido a recoger los datos (de manera ordenada xd)
+      document.getElementById("cardSection").innerHTML+=` 
         <div class = "card mb-3">
           <div class= "card-body">
             <h5 class="card-title">${taskValue.task}</h5>
